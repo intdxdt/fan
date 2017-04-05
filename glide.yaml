@@ -1,0 +1,3 @@
+package: fan
+import:
+- package: github.com/matryer/runner
