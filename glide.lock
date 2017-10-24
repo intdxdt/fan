@@ -1,6 +1,0 @@
-hash: bb4dcda22d523de64fdb50731fd262d6c8ea5e95252542aa4207931777fa0ce1
-updated: 2017-04-05T08:56:44.397409043-03:00
-imports:
-- name: github.com/matryer/runner
-  version: cf38584beeb2f574760aacdf7b1f33795c703cbf
-testImports: []
