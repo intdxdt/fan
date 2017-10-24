@@ -77,7 +77,7 @@ func timeIt(fn func() []interface{}, desc string) interface{} {
 	return res
 }
 
-func TestCmp(t *testing.T) {
+func TestFan(t *testing.T) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	g := goblin.Goblin(t)
 	g.Describe("fan in - fan out", func() {
