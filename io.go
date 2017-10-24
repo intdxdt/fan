@@ -2,7 +2,7 @@ package fan
 
 //IO Stream takes an in-bound readable readable stream and
 // returns an outbound readable stream
-func IOStream(stream <-chan interface{}, worker func(interface{}) interface{},
+func Stream(stream <-chan interface{}, worker func(interface{}) interface{},
 	concur int, exit <-chan struct{}) <-chan interface{} {
 	return process(worker, stream, concur, exit)
 }

@@ -1,9 +1,10 @@
-package main
+package fan
 
 import (
-	"fmt"
-	"fan"
+	"github.com/franela/goblin"
 	"time"
+	"fmt"
+	"testing"
 	"runtime"
 )
 
@@ -43,7 +44,7 @@ func streamer() []interface{} {
 		return slowFib(v.(int))
 	}
 
-	var out = fan.IOStream(stream, worker, ConCur, exit)
+	var out = Stream(stream, worker, ConCur, exit)
 	for o := range out {
 		results = append(results, o.(int))
 	}
@@ -63,28 +64,33 @@ func payload() []interface{} {
 		return slowFib(v.(int))
 	}
 
-	res := fan.Payload(dat, worker, ConCur, exit)
+	res := Payload(dat, worker, ConCur, exit)
 	return res
 }
 
 func timeIt(fn func() []interface{}, desc string) interface{} {
-	tick := time.Now()
-	res := fn()
-	tock := time.Now()
-	d := tock.Sub(tick)
-	fmt.Println(fmt.Sprintf("%v: , duration: %v", desc, d.Seconds()))
+	var tick = time.Now()
+	var res  = fn()
+	var tock = time.Now()
+	var d    = tock.Sub(tick)
+	fmt.Println(fmt.Sprintf("%v:\tduration:\t%.2f", desc, d.Seconds()))
 	return res
 }
 
-func main() {
+func TestCmp(t *testing.T) {
 	runtime.GOMAXPROCS(runtime.NumCPU())
+	g := goblin.Goblin(t)
+	g.Describe("fan in - fan out", func() {
+		g.It("should test serial and parallel fan", func() {
+			g.Timeout(1 * time.Minute)
 
-	oneby := timeIt(onbyone, "OneByOne")
-	fmt.Println(oneby)
+			expects := timeIt(onbyone, "Serial")
 
-	strm := timeIt(streamer, "Streamer")
-	fmt.Println(strm)
+			strm := timeIt(streamer, "Streamer")
+			g.Assert(strm).Equal(expects)
 
-	pyld := timeIt(payload, "Payload")
-	fmt.Println(pyld)
+			pyld := timeIt(payload, "Payload")
+			g.Assert(pyld).Equal(expects)
+		})
+	})
 }
