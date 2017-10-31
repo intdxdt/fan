@@ -1,15 +1,15 @@
 package fan
 
 //input source
-func src(inputStream []interface{}, exit <-chan struct{}) <-chan interface{} {
+func src(data []interface{}, exit <-chan struct{}) <-chan interface{} {
 	out := make(chan interface{})
 	go func() {
 		defer close(out)
-		for i := range inputStream {
+		for i := range data {
 			select {
 			case <- exit :
 				return
-			case out <- inputStream[i]:
+			case out <- data[i]:
 			}
 		}
 	}()

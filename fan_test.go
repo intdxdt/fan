@@ -68,6 +68,44 @@ func payload() []interface{} {
 	return res
 }
 
+func pool() []interface{} {
+	var results = make([]interface{}, 0)
+	var stream = make(chan interface{})
+	var exit = make(chan struct{})
+
+	go func() {
+		for _, d := range data {
+			stream <- d
+		}
+	}()
+
+	var worker = func(v interface{}) interface{} {
+		return slowFib(v.(int))
+	}
+
+	var done = make(chan struct{})
+	var pool = NewPool(stream, worker, ConCur, exit)
+
+	var out = pool.Start()
+	go func() {
+		for {
+			select {
+			case o := <-out:
+				results = append(results, o.(int))
+			default:
+				//halting condition all data served and processed
+				if len(results) == len(data) && pool.IsIdle() {
+					close(exit)
+					close(done)
+					return
+				}
+			}
+		}
+	}()
+	<-done
+	return results
+}
+
 func timeIt(fn func() []interface{}, desc string) interface{} {
 	var tick = time.Now()
 	var res  = fn()
@@ -91,6 +129,9 @@ func TestFan(t *testing.T) {
 
 			pyld := timeIt(payload, "Payload")
 			g.Assert(pyld).Equal(expects)
+
+			pool := timeIt(payload, "Pool")
+			g.Assert(pool).Equal(expects)
 		})
 	})
 }
