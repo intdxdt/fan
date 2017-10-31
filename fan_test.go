@@ -1,11 +1,11 @@
 package fan
 
 import (
-	"github.com/franela/goblin"
 	"time"
 	"fmt"
 	"testing"
 	"runtime"
+	"github.com/franela/goblin"
 )
 
 const ConCur = 8
@@ -130,8 +130,8 @@ func TestFan(t *testing.T) {
 			pyld := timeIt(payload, "Payload")
 			g.Assert(pyld).Equal(expects)
 
-			pool := timeIt(payload, "Pool")
-			g.Assert(pool).Equal(expects)
+			plpyld := timeIt(pool, "Pool")
+			g.Assert(plpyld).Equal(expects)
 		})
 	})
 }
