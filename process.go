@@ -10,7 +10,7 @@ func process(worker func(interface{}) interface{},
 	var wg sync.WaitGroup
 	//set up number of of clones to wait for
 	wg.Add(concurrency)
-	var out = make(chan interface{})
+	var out = make(chan interface{}, 2*concurrency)
 	var onExit = false
 	//assume only one worker reading from input chan
 	fn := func(idx int) {
