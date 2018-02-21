@@ -62,8 +62,7 @@ func payload() []interface{} {
 		return slowFib(v.(int))
 	}
 
-	res := Payload(dat, worker, runtime.NumCPU(), exit)
-	return res
+	return Payload(dat, worker, runtime.NumCPU(), exit)
 }
 
 func timeIt(fn func() []interface{}, desc string) interface{} {
