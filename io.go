@@ -15,14 +15,15 @@ func Payload(
 	var results = make([]interface{}, 0)
 
 	// stage 1 - input stream
-	in := src(data, exit)
+	var in = src(data, exit)
 
 	// stage 2 - process payload
-	res := process(worker, in, concur, exit)
+	var res = process(worker, in, concur, exit)
 
 	// stage 3 - store uploads
-	done := store(res, &results, exit)
+	var done = store(res, &results, exit)
 
-	<-done //wait for done signal
+	<-done //wait
+
 	return results
 }

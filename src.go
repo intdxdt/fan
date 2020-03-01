@@ -1,6 +1,5 @@
 package fan
 
-//input source
 func src(data []interface{}, exit <-chan struct{}) <-chan interface{} {
 	out := make(chan interface{})
 	go func() {

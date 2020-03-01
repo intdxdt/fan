@@ -1,14 +1,14 @@
 package fan
 
 import (
-	"time"
 	"fmt"
-	"testing"
-	"runtime"
 	"github.com/franela/goblin"
+	"runtime"
+	"testing"
+	"time"
 )
 
-var data = []int{40, 40, 40, 40, 40, 40, 40, 40, 40, 40,40, 40, 40, 40, 40,40, 40, 40, 40, 40, 40, 40,40, 40, 40, 40, 40}
+var data = []int{40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40}
 
 func slowFib(n int) int {
 	if n == 0 || n == 1 {
