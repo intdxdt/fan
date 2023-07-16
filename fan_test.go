@@ -3,6 +3,7 @@ package fan
 import (
 	"fmt"
 	"github.com/franela/goblin"
+	"golang.org/x/exp/constraints"
 	"runtime"
 	"testing"
 	"time"
@@ -10,24 +11,24 @@ import (
 
 var data = []int{40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40}
 
-func slowFib(n int) int {
+func slowFib[T constraints.Signed](n T) T {
 	if n == 0 || n == 1 {
 		return n
 	}
 	return slowFib(n-1) + slowFib(n-2)
 }
 
-func onbyone() []interface{} {
-	var results = make([]interface{}, len(data))
+func oneByOne() []int {
+	var results = make([]int, len(data))
 	for i, d := range data {
 		results[i] = slowFib(d)
 	}
 	return results
 }
 
-func streamer() []interface{} {
-	var results = make([]interface{}, 0)
-	var stream = make(chan interface{})
+func streamer() []int {
+	var results = make([]int, 0)
+	var stream = make(chan int)
 	var exit = make(chan struct{})
 	defer close(exit)
 
@@ -38,34 +39,29 @@ func streamer() []interface{} {
 		close(stream)
 	}()
 
-	var worker = func(v interface{}) interface{} {
-		return slowFib(v.(int))
+	var worker = func(v int) int {
+		return slowFib(v)
 	}
 
 	var out = Stream(stream, worker, runtime.NumCPU(), exit)
 	for o := range out {
-		results = append(results, o.(int))
+		results = append(results, o)
 	}
 	return results
 }
 
-func payload() []interface{} {
-	var dat = make([]interface{}, 0)
+func payload() []int {
 	var exit = make(chan struct{})
 	defer close(exit)
 
-	for _, d := range data {
-		dat = append(dat, d)
+	var worker = func(v int) int {
+		return slowFib(v)
 	}
 
-	worker := func(v interface{}) interface{} {
-		return slowFib(v.(int))
-	}
-
-	return Payload(dat, worker, runtime.NumCPU(), exit)
+	return Payload(data, worker, runtime.NumCPU(), exit)
 }
 
-func timeIt(fn func() []interface{}, desc string) interface{} {
+func timeIt[T any](fn func() []T, desc string) []T {
 	var tick = time.Now()
 	var res = fn()
 	var tock = time.Now()
@@ -81,12 +77,12 @@ func TestFan(t *testing.T) {
 		g.It("should test serial and parallel fan", func() {
 			g.Timeout(3 * time.Minute)
 
-			expects := timeIt(onbyone, "Serial")
+			var expects = timeIt(oneByOne, "Serial")
 
-			strm := timeIt(streamer, "Streamer")
+			var strm = timeIt(streamer, "Streamer")
 			g.Assert(strm).Equal(expects)
 
-			pyld := timeIt(payload, "Payload")
+			var pyld = timeIt(payload, "Payload")
 			g.Assert(pyld).Equal(expects)
 
 		})

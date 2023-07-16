@@ -1,12 +1,12 @@
 package fan
 
-func src(data []interface{}, exit <-chan struct{}) <-chan interface{} {
-	out := make(chan interface{})
+func src[T any](data []T, exit <-chan struct{}) <-chan T {
+	out := make(chan T)
 	go func() {
 		defer close(out)
 		for i := range data {
 			select {
-			case <- exit :
+			case <-exit:
 				return
 			case out <- data[i]:
 			}

@@ -4,11 +4,10 @@ import (
 	"sync"
 )
 
-func process(worker func(interface{}) interface{},
-	in <-chan interface{}, concurrency int, exit <-chan struct{}) <-chan interface{} {
+func process[T any](worker func(T) T, in <-chan T, concurrency int, exit <-chan struct{}) <-chan T {
 	var wg sync.WaitGroup
 	wg.Add(concurrency)
-	var out = make(chan interface{}, 2*concurrency)
+	var out = make(chan T, 2*concurrency)
 	var onExit = false
 
 	var fn = func(idx int) {

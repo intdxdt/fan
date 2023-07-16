@@ -1,26 +1,26 @@
 package fan
 
-type Worker struct {
+type Worker[T any] struct {
 	id        string
 	free      chan<- string
 	freeState bool
-	fn        func(interface{}) interface{}
+	fn        func(T) T
 	exit      chan struct{}
-	input     chan interface{}
-	out       chan<- interface{}
+	input     chan T
+	out       chan<- T
 	running   bool
 }
 
-func (w *Worker) isBusy() {
+func (w *Worker[T]) isBusy() {
 	w.freeState = false
 }
 
-func (w *Worker) isFree() {
+func (w *Worker[T]) isFree() {
 	w.freeState = true
 	w.free <- w.id
 }
 
-func (w *Worker) start() {
+func (w *Worker[T]) start() {
 	w.running = true
 	w.isFree() //first: announce you are free
 	defer func() {
@@ -39,6 +39,6 @@ func (w *Worker) start() {
 	}
 }
 
-func (w *Worker) stop() {
+func (w *Worker[T]) stop() {
 	close(w.exit)
 }
