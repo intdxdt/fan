@@ -2,11 +2,12 @@ package fan
 
 import (
 	"fmt"
-	"github.com/franela/goblin"
-	"golang.org/x/exp/constraints"
 	"runtime"
 	"testing"
 	"time"
+
+	"github.com/franela/goblin"
+	"golang.org/x/exp/constraints"
 )
 
 var data = []int{40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40}
